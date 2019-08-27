@@ -1,4 +1,18 @@
-use m_o::{parse_bool, parse_constructor, parse_dict, parse_float, parse_int, parse_list, parse_set, parse_str, parse_tuple, parse_value, Value};
+use std::convert::TryFrom;
+
+use m_o::{
+    parse_bool,
+    parse_constructor,
+    parse_dict,
+    parse_float,
+    parse_int,
+    parse_list,
+    parse_set,
+    parse_str,
+    parse_tuple,
+    parse_value,
+    Value,
+};
 
 #[test]
 fn test_int() {
@@ -75,7 +89,7 @@ fn test_dict() {
 
 #[test]
 fn test_empty_dict_value() {
-    let (_rest, dict) = parse_value("{}").unwrap();
+    let dict = Value::try_from("{}").unwrap();
     assert_eq!(dict, Value::Dict(vec![]));
 }
 
@@ -90,7 +104,7 @@ fn test_constructor() {
 
 #[test]
 fn test_big_value() {
-    let (_rest, value) = parse_value("A(qwerty={1, 2, [True, [False, 'abc']]})").unwrap();
+    let value = Value::try_from("A(qwerty={1, 2, [True, [False, 'abc']]})").unwrap();
     assert_eq!(value, Value::Constructor("A".into(), vec![
         ("qwerty".into(), Value::Set(vec![
             Value::Int(1),

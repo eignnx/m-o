@@ -1,3 +1,4 @@
+use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Write;
 
@@ -311,3 +312,13 @@ pub fn parse_value(input: &str) -> IResult<&str, Value> {
     ))(input)
 }
 
+impl<'a> TryFrom<&'a str> for Value {
+    type Error = nom::Err<(&'a str, nom::error::ErrorKind)>;
+
+    fn try_from(input: &'a str) -> Result<Self, Self::Error> {
+        match parse_value(input) {
+            Ok((_rest, value)) => Ok(value),
+            Err(err) => Err(err),
+        }
+    }
+}
