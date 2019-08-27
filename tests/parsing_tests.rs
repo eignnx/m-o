@@ -1,4 +1,4 @@
-use mo::{parse_bool, parse_constructor, parse_dict, parse_float, parse_int, parse_list, parse_set, parse_str, parse_tuple, parse_value, Value};
+use m_o::{parse_bool, parse_constructor, parse_dict, parse_float, parse_int, parse_list, parse_set, parse_str, parse_tuple, parse_value, Value};
 
 #[test]
 fn test_int() {
