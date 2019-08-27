@@ -1,10 +1,10 @@
 use std::io::{self, Read};
 
 fn main() -> io::Result<()> {
-    let stdin = io::stdin();
-    for byte in stdin.lock().bytes() {
-        let byte = byte?;
-        println!(">>> {}", byte);
-    }
+    let mut stdin = io::stdin();
+    let mut buf = String::new();
+    stdin.read_to_string(&mut buf).expect("stdin read will succeed");
+    let (_, value) = mo::parse_value(&buf).expect("input is parsable Python expression");
+    println!("{}", value);
     Ok(())
 }
