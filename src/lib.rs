@@ -2,11 +2,11 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Write;
 
+use nom::{AsChar, IResult};
 use nom::branch::alt;
-use nom::bytes::complete::{is_not, tag};
-use nom::character::complete::{alphanumeric1, char, digit1, multispace0};
+use nom::bytes::complete::{is_not, tag, take_while};
+use nom::character::complete::{char, digit1, multispace0};
 use nom::combinator::{map, map_res};
-use nom::IResult;
 use nom::multi::separated_list;
 use nom::number::complete::double;
 use nom::sequence::{delimited, preceded, tuple};
@@ -256,14 +256,25 @@ pub fn parse_dict(input: &str) -> IResult<&str, Value> {
     )(input)
 }
 
+fn identifier_initial(input: &str) -> IResult<&str, char> {
+    input.get(0..1)
+        .map(|first| first.chars().next().unwrap())
+        .filter(|ch| (*ch == '_' || ch.is_alpha()))
+        .map(|ch| (&input[1..], ch))
+        .ok_or(nom::Err::Error((input, nom::error::ErrorKind::Char)))
+}
+
 fn identifier(input: &str) -> IResult<&str, String> {
     map(
-        alphanumeric1, // TODO: define better identifier parser
-        String::from
+        tuple((
+            identifier_initial,
+            take_while(|ch: char| (ch.is_alphanumeric() || ch == '_')),
+        )),
+        |(initial, rest) | format!("{}{}", initial, rest)
     )(input)
 }
 
-fn parse_symbol(input: &str) -> IResult<&str, Value> {
+pub fn parse_symbol(input: &str) -> IResult<&str, Value> {
     map(
         identifier,
         Value::Symbol,

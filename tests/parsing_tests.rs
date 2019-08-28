@@ -9,8 +9,8 @@ use m_o::{
     parse_list,
     parse_set,
     parse_str,
+    parse_symbol,
     parse_tuple,
-    parse_value,
     Value,
 };
 
@@ -24,6 +24,20 @@ fn test_int() {
 fn test_float() {
     let (_rest, f) = parse_float("123.456").unwrap();
     assert_eq!(f, Value::Float(123.456));
+}
+
+#[test]
+fn test_symbol() {
+    let (_rest, sym) = parse_symbol("_").unwrap();
+    assert_eq!(sym, Value::Symbol("_".into()));
+
+    let (_rest, sym) = parse_symbol("_123").unwrap();
+    assert_eq!(sym, Value::Symbol("_123".into()));
+
+    let (_rest, sym) = parse_symbol("x86_64").unwrap();
+    assert_eq!(sym, Value::Symbol("x86_64".into()));
+
+    assert!(parse_symbol("3d_movie").is_err());
 }
 
 #[test]
