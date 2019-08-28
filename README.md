@@ -1,7 +1,7 @@
 # m-o
-A Python repr parser and pretty-printer implemented in Rust. The name is based on the [WALL-E character M-O](https://disney.fandom.com/wiki/M-O), a robot who liked to clean things up.
+A command line tool for parsing Python [dataclass](https://docs.python.org/3/library/dataclasses.html) [reprs](https://docs.python.org/3/library/functions.html#repr) and pretty-printing them. The name is based on the [WALL-E character M-O](https://disney.fandom.com/wiki/M-O), a robot who liked to clean things up.
 
-## Example:
+## Example
 
 ```python
 # my_data.py
@@ -22,7 +22,7 @@ $ python my_data.py
 Dog(name="Pip", age=7, friends=["Quincy", "Digger"])
 
 $ # with m-o:
-$ python my_data.py | path/to/m-o
+$ python my_data.py | m-o
 Dog(
     name="Pip",
     age=7,
@@ -40,4 +40,6 @@ Python's `pprint.pprint` function allows common values (tuples, lists, dicts, et
 Rather than implementing `pprint.pprint` for your dataclasses (who even knows how to do this anyway?), just print out the value and pipe it into this tool. The data structure will be pretty-printed to your terminal.
 
 ## Installation
-TODO: I don't know right now.
+```shell
+$ cargo install m-o
+```

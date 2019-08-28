@@ -1,12 +1,12 @@
 [package]
 name = "m-o"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["eignnx <eignnx@gmail.com>"]
 edition = "2018"
 
 homepage = "https://github.com/eignnx/m-o"
 repository = "https://github.com/eignnx/m-o"
-license-file = "LICENSE"
+license = "GPL-3.0"
 
 description = "A command line tool for parsing Python dataclass reprs and pretty-printing them."
 readme = "README.md"
