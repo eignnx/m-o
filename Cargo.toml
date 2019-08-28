@@ -4,6 +4,15 @@ version = "0.1.0"
 authors = ["eignnx <eignnx@gmail.com>"]
 edition = "2018"
 
+homepage = "https://github.com/eignnx/m-o"
+repository = "https://github.com/eignnx/m-o"
+license-file = "LICENSE"
+
+description = "A command line tool for parsing Python dataclass reprs and pretty-printing them."
+readme = "README.md"
+categories = ["command-line-utilities", "parsing", "development-tools::debugging", "value-formatting"]
+keywords = ["python", "dataclasses", "pretty print"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
