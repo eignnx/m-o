@@ -6,7 +6,7 @@ use nom::{AsChar, IResult};
 use nom::branch::alt;
 use nom::bytes::complete::{is_not, tag};
 use nom::character::complete::{char, digit1, multispace0};
-use nom::combinator::{map, map_res};
+use nom::combinator::{map, map_res, opt};
 use nom::multi::separated_list;
 use nom::number::complete::double;
 use nom::sequence::{delimited, preceded, tuple};
@@ -185,8 +185,14 @@ pub fn parse_float(input: &str) -> IResult<&str, Value> {
 
 pub fn parse_int(input: &str) -> IResult<&str, Value> {
     map(
-        map_res(digit1, |s: &str| s.parse::<i64>()), // TODO: handle negative signs
-        Value::Int,
+        tuple((
+            map(
+                opt(tag("-")),
+                |sign| if sign.is_some() { -1 } else { 1 }
+            ),
+            map_res(digit1, |s: &str| s.parse::<i64>()),
+        )),
+        |(sign, i)| Value::Int(sign * i),
     )(input)
 }
 

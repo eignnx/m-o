@@ -16,14 +16,20 @@ use m_o::{
 
 #[test]
 fn test_int() {
-    let (_rest, n) = parse_int("1234").unwrap();
-    assert_eq!(n, Value::Int(1234));
+    let (_rest, i) = parse_int("1234").unwrap();
+    assert_eq!(i, Value::Int(1234));
+
+    let (_rest, i) = parse_int("-1234").unwrap();
+    assert_eq!(i, Value::Int(-1234));
 }
 
 #[test]
 fn test_float() {
     let (_rest, f) = parse_float("123.456").unwrap();
     assert_eq!(f, Value::Float(123.456));
+
+    let (_rest, f) = parse_float("-1.234").unwrap();
+    assert_eq!(f, Value::Float(-1.234));
 }
 
 #[test]
