@@ -4,7 +4,7 @@ use std::fmt::Write;
 
 use nom::{AsChar, IResult};
 use nom::branch::alt;
-use nom::bytes::complete::{is_not, tag, take_while};
+use nom::bytes::complete::{is_not, tag};
 use nom::character::complete::{char, digit1, multispace0};
 use nom::combinator::{map, map_res};
 use nom::multi::separated_list;
@@ -256,22 +256,22 @@ pub fn parse_dict(input: &str) -> IResult<&str, Value> {
     )(input)
 }
 
-fn identifier_initial(input: &str) -> IResult<&str, char> {
-    input.get(0..1)
-        .map(|first| first.chars().next().unwrap())
-        .filter(|ch| (*ch == '_' || ch.is_alpha()))
-        .map(|ch| (&input[1..], ch))
-        .ok_or(nom::Err::Error((input, nom::error::ErrorKind::Char)))
-}
-
 fn identifier(input: &str) -> IResult<&str, String> {
-    map(
-        tuple((
-            identifier_initial,
-            take_while(|ch: char| (ch.is_alphanumeric() || ch == '_')),
-        )),
-        |(initial, rest) | format!("{}{}", initial, rest)
-    )(input)
+    let mut chars = input.chars().enumerate();
+    let first_char = chars.next();
+    first_char
+        .filter(|(_, ch)| (*ch == '_' || ch.is_alpha()))
+        .and_then(|_| {
+            chars
+                .take_while(|(_i, ch)| (*ch == '_' || ch.is_alphanumeric()))
+                .map(|(i, _ch)| i)
+                .last()
+                .map(|idx| {
+                    (&input[idx+1..], input[0..idx+1].into()) // TODO: remove .into() here
+                })
+                .or_else(|| Some((&input[1..], input[..1].into())))
+        })
+        .ok_or_else(|| nom::Err::Error((input, nom::error::ErrorKind::Char)))
 }
 
 pub fn parse_symbol(input: &str) -> IResult<&str, Value> {
