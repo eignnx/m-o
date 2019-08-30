@@ -1,4 +1,4 @@
-use m_o::Value;
+use m_o::value::Value;
 
 #[test]
 fn test_simple_value_to_string() {
@@ -6,13 +6,17 @@ fn test_simple_value_to_string() {
         Value::Int(123),
         Value::Str("abc".into()),
         Value::Bool(true),
-        Value::Constructor("Dog".into(), vec![
-            ("name".into(), Value::Str("Pip".into())),
-            ("age".into(), Value::Int(7)),
-        ]),
+        Value::Constructor(
+            "Dog".into(),
+            vec![
+                ("name".into(), Value::Str("Pip".into())),
+                ("age".into(), Value::Int(7)),
+            ],
+        ),
     ]);
-    assert_eq!(list.to_string(),
-               r#"[
+    assert_eq!(
+        list.to_string(),
+        r#"[
     123,
     "abc",
     True,
@@ -26,19 +30,17 @@ fn test_simple_value_to_string() {
 
 #[test]
 fn test_deep_nesting_to_string() {
-    let value = Value::List(vec![
-        Value::List(vec![
-            Value::List(vec![
-                Value::Constructor("Dog".into(), vec![
-                    ("name".into(), Value::Str("Pip".into())),
-                    ("age".into(), Value::Int(7)),
-                ])
-            ])
-        ])
-    ]);
+    let value = Value::List(vec![Value::List(vec![Value::List(vec![
+        Value::Constructor(
+            "Dog".into(),
+            vec![
+                ("name".into(), Value::Str("Pip".into())),
+                ("age".into(), Value::Int(7)),
+            ],
+        ),
+    ])])]);
 
-    let expected =
-        r#"[
+    let expected = r#"[
     [
         [
             Dog(
@@ -54,16 +56,15 @@ fn test_deep_nesting_to_string() {
 
 #[test]
 fn test_nested_dicts_to_string() {
-    let dict = Value::Dict(vec![
-        (Value::Str("abc".into()), Value::Dict(vec![
-            (Value::Int(123), Value::Dict(vec![
-                (Value::Bool(true), Value::Bool(false))
-            ]))
-        ]))
-    ]);
+    let dict = Value::Dict(vec![(
+        Value::Str("abc".into()),
+        Value::Dict(vec![(
+            Value::Int(123),
+            Value::Dict(vec![(Value::Bool(true), Value::Bool(false))]),
+        )]),
+    )]);
 
-    let expected =
-        r#"{
+    let expected = r#"{
     "abc": {
         123: {
             True: False,
