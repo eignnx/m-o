@@ -91,7 +91,7 @@ pub fn parse_dict(input: &str) -> IResult<&str, Value> {
             separated_list(comma_space, parse_dict_key_value),
             char('}'),
         ),
-        |v| Value::Dict(v),
+        Value::Dict,
     )(input)
 }
 
@@ -105,7 +105,7 @@ fn identifier(input: &str) -> IResult<&str, &str> {
                 .take_while(|(_i, ch)| (*ch == '_' || ch.is_alphanumeric()))
                 .map(|(i, _ch)| i)
                 .last()
-                .map(|idx| (&input[idx + 1..], &input[0..idx + 1]))
+                .map(|idx| (&input[idx + 1..], &input[0..=idx]))
                 .or_else(|| Some((&input[1..], &input[..1])))
         })
         .ok_or_else(|| nom::Err::Error((input, nom::error::ErrorKind::Char)))

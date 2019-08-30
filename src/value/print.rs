@@ -11,7 +11,7 @@ fn write_comma_seq(
     level: usize,
 ) -> Result<(), fmt::Error> {
     f.write_char(open)?;
-    if xs.len() > 0 {
+    if !xs.is_empty() {
         f.write_char('\n')?;
         for x in xs {
             indent(f, level + 1)?;
