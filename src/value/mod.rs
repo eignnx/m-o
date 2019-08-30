@@ -2,20 +2,20 @@ pub mod parse;
 pub mod print;
 
 #[derive(Debug, Clone)]
-pub enum Value {
+pub enum Value<'a> {
     Bool(bool),
-    Str(String),
+    Str(&'a str),
     Int(i64),
     Float(f64),
-    Tuple(Vec<Value>),
-    List(Vec<Value>),
-    Set(Vec<Value>),
-    Dict(Vec<(Value, Value)>),
-    Constructor(String, Vec<(String, Value)>),
-    Symbol(String),
+    Tuple(Vec<Value<'a>>),
+    List(Vec<Value<'a>>),
+    Set(Vec<Value<'a>>),
+    Dict(Vec<(Value<'a>, Value<'a>)>),
+    Constructor(&'a str, Vec<(&'a str, Value<'a>)>),
+    Symbol(&'a str),
 }
 
-impl PartialEq for Value {
+impl<'a> PartialEq for Value<'a> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Value::Bool(x), Value::Bool(y)) => x == y,
@@ -33,4 +33,4 @@ impl PartialEq for Value {
     }
 }
 
-impl Eq for Value {}
+impl<'a> Eq for Value<'a> {}

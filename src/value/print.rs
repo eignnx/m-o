@@ -26,7 +26,7 @@ fn write_comma_seq(
 
 fn write_kwarg(
     f: &mut fmt::Formatter,
-    (key, value): &(String, Value),
+    (key, value): &(&str, Value),
     level: usize,
 ) -> Result<(), fmt::Error> {
     f.write_str(key)?;
@@ -38,7 +38,7 @@ fn write_kwarg(
 fn write_constructor(
     f: &mut fmt::Formatter,
     name: &str,
-    kwargs: &[(String, Value)],
+    kwargs: &[(&str, Value)],
     level: usize,
 ) -> Result<(), fmt::Error> {
     f.write_str(name)?;
@@ -104,7 +104,7 @@ fn display_value(f: &mut fmt::Formatter, value: &Value, level: usize) -> Result<
     }
 }
 
-impl fmt::Display for Value {
+impl<'a> fmt::Display for Value<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         display_value(f, self, 0)
     }

@@ -4,14 +4,11 @@ use m_o::value::Value;
 fn test_simple_value_to_string() {
     let list = Value::List(vec![
         Value::Int(123),
-        Value::Str("abc".into()),
+        Value::Str("abc"),
         Value::Bool(true),
         Value::Constructor(
-            "Dog".into(),
-            vec![
-                ("name".into(), Value::Str("Pip".into())),
-                ("age".into(), Value::Int(7)),
-            ],
+            "Dog",
+            vec![("name", Value::Str("Pip")), ("age", Value::Int(7))],
         ),
     ]);
     assert_eq!(
@@ -32,11 +29,8 @@ fn test_simple_value_to_string() {
 fn test_deep_nesting_to_string() {
     let value = Value::List(vec![Value::List(vec![Value::List(vec![
         Value::Constructor(
-            "Dog".into(),
-            vec![
-                ("name".into(), Value::Str("Pip".into())),
-                ("age".into(), Value::Int(7)),
-            ],
+            "Dog",
+            vec![("name", Value::Str("Pip")), ("age", Value::Int(7))],
         ),
     ])])]);
 
@@ -57,7 +51,7 @@ fn test_deep_nesting_to_string() {
 #[test]
 fn test_nested_dicts_to_string() {
     let dict = Value::Dict(vec![(
-        Value::Str("abc".into()),
+        Value::Str("abc"),
         Value::Dict(vec![(
             Value::Int(123),
             Value::Dict(vec![(Value::Bool(true), Value::Bool(false))]),

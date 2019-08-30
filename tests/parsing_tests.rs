@@ -37,13 +37,13 @@ fn test_float() -> ParseResult<()> {
 #[test]
 fn test_symbol() -> ParseResult<()> {
     let (_rest, sym) = parse_symbol("_")?;
-    assert_eq!(sym, Value::Symbol("_".into()));
+    assert_eq!(sym, Value::Symbol("_"));
 
     let (_rest, sym) = parse_symbol("_123")?;
-    assert_eq!(sym, Value::Symbol("_123".into()));
+    assert_eq!(sym, Value::Symbol("_123"));
 
     let (_rest, sym) = parse_symbol("x86_64")?;
-    assert_eq!(sym, Value::Symbol("x86_64".into()));
+    assert_eq!(sym, Value::Symbol("x86_64"));
 
     assert!(parse_symbol("3d_movie").is_err());
 
@@ -53,10 +53,10 @@ fn test_symbol() -> ParseResult<()> {
 #[test]
 fn test_str() -> ParseResult<()> {
     let (_rest, s) = parse_str("\"double quoted\"")?;
-    assert_eq!(s, Value::Str("double quoted".into()));
+    assert_eq!(s, Value::Str("double quoted"));
 
     let (_rest, s) = parse_str("'single quoted'")?;
-    assert_eq!(s, Value::Str("single quoted".into()));
+    assert_eq!(s, Value::Str("single quoted"));
 
     Ok(())
 }
@@ -120,7 +120,7 @@ fn test_dict() -> ParseResult<()> {
         dict,
         Value::Dict(vec![
             (Value::Int(1), Value::Int(2)),
-            (Value::Str("a".into()), Value::Int(3)),
+            (Value::Str("a"), Value::Int(3)),
         ])
     );
 
@@ -140,11 +140,8 @@ fn test_constructor() -> ParseResult<()> {
     assert_eq!(
         cons,
         Value::Constructor(
-            "MyType".into(),
-            vec![
-                ("arg1".into(), Value::Int(12)),
-                ("arg2".into(), Value::Int(34)),
-            ]
+            "MyType",
+            vec![("arg1", Value::Int(12)), ("arg2", Value::Int(34)),]
         )
     );
     Ok(())
@@ -156,15 +153,15 @@ fn test_big_value() -> ParseResult<()> {
     assert_eq!(
         value,
         Value::Constructor(
-            "A".into(),
+            "A",
             vec![(
-                "qwerty".into(),
+                "qwerty",
                 Value::Set(vec![
                     Value::Int(1),
                     Value::Int(2),
                     Value::List(vec![
                         Value::Bool(true),
-                        Value::List(vec![Value::Bool(false), Value::Str("abc".into())])
+                        Value::List(vec![Value::Bool(false), Value::Str("abc")])
                     ])
                 ])
             )]

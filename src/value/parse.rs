@@ -1,14 +1,14 @@
 use std::convert::TryFrom;
 
 use nom::{
-    AsChar,
     branch::alt,
     bytes::complete::{is_not, tag},
     character::complete::{char, digit1, multispace0},
     combinator::{map, not, opt},
-    IResult,
     multi::separated_list,
-    number::complete::double, sequence::{delimited, preceded, terminated, tuple},
+    number::complete::double,
+    sequence::{delimited, preceded, terminated, tuple},
+    AsChar, IResult,
 };
 
 use super::Value;
@@ -23,9 +23,7 @@ pub fn parse_bool(input: &str) -> IResult<&str, Value> {
 pub fn parse_str(input: &str) -> IResult<&str, Value> {
     let single_quoted = delimited(char('\''), is_not("'"), char('\''));
     let double_quoted = delimited(char('"'), is_not("\""), char('"'));
-    map(alt((single_quoted, double_quoted)), |s: &str| {
-        Value::Str(s.into())
-    })(input)
+    map(alt((single_quoted, double_quoted)), Value::Str)(input)
 }
 
 pub fn parse_int(input: &str) -> IResult<&str, Value> {
@@ -47,9 +45,9 @@ pub fn parse_float(input: &str) -> IResult<&str, Value> {
 
 fn parse_seq<'a>(
     open: char,
-    f: impl Fn(Vec<Value>) -> Value,
+    f: impl Fn(Vec<Value<'a>>) -> Value<'a>,
     close: char,
-) -> impl Fn(&'a str) -> IResult<&'a str, Value> {
+) -> impl Fn(&'a str) -> IResult<&'a str, Value<'a>> {
     move |input: &'a str| -> IResult<&'a str, Value> {
         map(
             delimited(
@@ -97,7 +95,7 @@ pub fn parse_dict(input: &str) -> IResult<&str, Value> {
     )(input)
 }
 
-fn identifier(input: &str) -> IResult<&str, String> {
+fn identifier(input: &str) -> IResult<&str, &str> {
     let mut chars = input.chars().enumerate();
     let first_char = chars.next();
     first_char
@@ -107,10 +105,8 @@ fn identifier(input: &str) -> IResult<&str, String> {
                 .take_while(|(_i, ch)| (*ch == '_' || ch.is_alphanumeric()))
                 .map(|(i, _ch)| i)
                 .last()
-                .map(|idx| {
-                    (&input[idx + 1..], input[0..idx + 1].into()) // TODO: remove .into() here
-                })
-                .or_else(|| Some((&input[1..], input[..1].into())))
+                .map(|idx| (&input[idx + 1..], &input[0..idx + 1]))
+                .or_else(|| Some((&input[1..], &input[..1])))
         })
         .ok_or_else(|| nom::Err::Error((input, nom::error::ErrorKind::Char)))
 }
@@ -119,7 +115,7 @@ pub fn parse_symbol(input: &str) -> IResult<&str, Value> {
     map(identifier, Value::Symbol)(input)
 }
 
-fn parse_kwarg(input: &str) -> IResult<&str, (String, Value)> {
+fn parse_kwarg(input: &str) -> IResult<&str, (&str, Value)> {
     tuple((identifier, preceded(char('='), parse_value)))(input)
 }
 
@@ -152,7 +148,7 @@ pub fn parse_value(input: &str) -> IResult<&str, Value> {
     ))(input)
 }
 
-impl<'a> TryFrom<&'a str> for Value {
+impl<'a> TryFrom<&'a str> for Value<'a> {
     type Error = nom::Err<(&'a str, nom::error::ErrorKind)>;
 
     fn try_from(input: &'a str) -> Result<Self, Self::Error> {
