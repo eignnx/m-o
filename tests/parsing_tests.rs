@@ -4,8 +4,8 @@ use nom::error::ErrorKind;
 
 use m_o::value::{
     parse::{
-        parse_bool, parse_constructor, parse_dict, parse_int_or_float, parse_list, parse_set,
-        parse_str, parse_symbol, parse_tuple,
+        parse_bool, parse_constructor, parse_dict, parse_list, parse_set, parse_str, parse_symbol,
+        parse_tuple,
     },
     Value,
 };
@@ -14,10 +14,10 @@ type ParseResult<T> = Result<T, nom::Err<(&'static str, ErrorKind)>>;
 
 #[test]
 fn test_int() -> ParseResult<()> {
-    let (_rest, i) = parse_int_or_float("1234")?;
+    let i = Value::try_from("1234")?;
     assert_eq!(i, Value::Int(1234));
 
-    let (_rest, i) = parse_int_or_float("-1234")?;
+    let i = Value::try_from("-1234")?;
     assert_eq!(i, Value::Int(-1234));
 
     Ok(())
@@ -25,10 +25,10 @@ fn test_int() -> ParseResult<()> {
 
 #[test]
 fn test_float() -> ParseResult<()> {
-    let (_rest, f) = parse_int_or_float("123.456")?;
+    let f = Value::try_from("123.456")?;
     assert_eq!(f, Value::Float(123.456));
 
-    let (_rest, f) = parse_int_or_float("-1.234")?;
+    let f = Value::try_from("-1.234")?;
     assert_eq!(f, Value::Float(-1.234));
 
     Ok(())

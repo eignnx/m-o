@@ -4,11 +4,11 @@ use nom::{
     AsChar,
     branch::alt,
     bytes::complete::{is_not, tag},
-    character::complete::{char, multispace0},
-    combinator::map,
+    character::complete::{char, digit1, multispace0},
+    combinator::{map, not, opt},
     IResult,
     multi::separated_list,
-    number::complete::recognize_float, sequence::{delimited, preceded, tuple},
+    number::complete::double, sequence::{delimited, preceded, terminated, tuple},
 };
 
 use super::Value;
@@ -28,19 +28,21 @@ pub fn parse_str(input: &str) -> IResult<&str, Value> {
     })(input)
 }
 
-pub fn parse_int_or_float(input: &str) -> IResult<&str, Value> {
-    let (rest, float_like) = recognize_float(input)?;
-    if float_like.contains('.') {
-        let f = float_like
-            .parse::<f64>()
-            .expect(&format!("input '{}' must parse as a float", float_like));
-        Ok((rest, Value::Float(f)))
-    } else {
-        let i = float_like
-            .parse::<i64>()
-            .expect(&format!("input '{}' must parse as an int", float_like));
-        Ok((rest, Value::Int(i)))
-    }
+pub fn parse_int(input: &str) -> IResult<&str, Value> {
+    map(
+        tuple((opt(tag("-")), terminated(digit1, not(tag("."))))),
+        |(sign, s): (Option<&str>, &str)| {
+            let sign = if sign.is_some() { -1 } else { 1 };
+            let i = s
+                .parse::<i64>()
+                .expect("sequence of digits can parse to int");
+            Value::Int(sign * i)
+        },
+    )(input)
+}
+
+pub fn parse_float(input: &str) -> IResult<&str, Value> {
+    map(double, Value::Float)(input)
 }
 
 fn parse_seq<'a>(
@@ -137,9 +139,8 @@ pub fn parse_constructor(input: &str) -> IResult<&str, Value> {
 
 pub fn parse_value(input: &str) -> IResult<&str, Value> {
     alt((
-        parse_int_or_float,
-        //        parse_int,
-        //        parse_float,
+        parse_int,
+        parse_float, // Appears after int parser because f64 is superset of i64
         parse_bool,
         parse_str,
         parse_list,
