@@ -2,14 +2,17 @@ use std::convert::TryFrom;
 use std::fmt;
 use std::fmt::Write;
 
-use nom::{AsChar, IResult};
-use nom::branch::alt;
-use nom::bytes::complete::{is_not, tag};
-use nom::character::complete::{char, digit1, multispace0};
-use nom::combinator::{map, map_res, opt};
-use nom::multi::separated_list;
-use nom::number::complete::double;
-use nom::sequence::{delimited, preceded, tuple};
+use nom::{
+    AsChar,
+    branch::alt,
+    bytes::complete::{is_not, tag},
+    character::complete::{char, multispace0},
+    combinator::map,
+    IResult,
+    multi::separated_list,
+    number::complete::recognize_float,
+    sequence::{delimited, preceded, tuple}
+};
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -176,24 +179,19 @@ pub fn parse_str(input: &str) -> IResult<&str, Value> {
     )(input)
 }
 
-pub fn parse_float(input: &str) -> IResult<&str, Value> {
-    map(
-        double,
-        Value::Float,
-    )(input)
-}
-
-pub fn parse_int(input: &str) -> IResult<&str, Value> {
-    map(
-        tuple((
-            map(
-                opt(tag("-")),
-                |sign| if sign.is_some() { -1 } else { 1 }
-            ),
-            map_res(digit1, |s: &str| s.parse::<i64>()),
-        )),
-        |(sign, i)| Value::Int(sign * i),
-    )(input)
+pub fn parse_int_or_float(input: &str) -> IResult<&str, Value> {
+    let (rest, float_like) = recognize_float(input)?;
+    if float_like.contains('.') {
+        let f = float_like
+            .parse::<f64>()
+            .expect(&format!("input '{}' must parse as a float", float_like));
+        Ok((rest, Value::Float(f)))
+    } else {
+        let i = float_like
+            .parse::<i64>()
+            .expect(&format!("input '{}' must parse as an int", float_like));
+        Ok((rest, Value::Int(i)))
+    }
 }
 
 fn parse_seq<'a>(open: char, f: impl Fn(Vec<Value>) -> Value, close: char) -> impl Fn(&'a str) -> IResult<&'a str, Value> {
@@ -316,8 +314,9 @@ pub fn parse_constructor(input: &str) -> IResult<&str, Value> {
 
 pub fn parse_value(input: &str) -> IResult<&str, Value> {
     alt((
-        parse_int,
-        parse_float,
+        parse_int_or_float,
+//        parse_int,
+//        parse_float,
         parse_bool,
         parse_str,
         parse_list,

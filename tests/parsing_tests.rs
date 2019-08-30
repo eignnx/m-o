@@ -1,34 +1,37 @@
 use std::convert::TryFrom;
 
+use nom::error::ErrorKind;
+
 use m_o::{
     parse_bool,
     parse_constructor,
     parse_dict,
-    parse_float,
-    parse_int,
+    parse_int_or_float,
     parse_list,
     parse_set,
     parse_str,
     parse_symbol,
     parse_tuple,
-    Value,
+    Value
 };
+
+type ParseResult<T> = Result<T, nom::Err<(&'static str, ErrorKind)>>;
 
 #[test]
 fn test_int() {
-    let (_rest, i) = parse_int("1234").unwrap();
+    let (_rest, i) = parse_int_or_float("1234").unwrap();
     assert_eq!(i, Value::Int(1234));
 
-    let (_rest, i) = parse_int("-1234").unwrap();
+    let (_rest, i) = parse_int_or_float("-1234").unwrap();
     assert_eq!(i, Value::Int(-1234));
 }
 
 #[test]
 fn test_float() {
-    let (_rest, f) = parse_float("123.456").unwrap();
+    let (_rest, f) = parse_int_or_float("123.456").unwrap();
     assert_eq!(f, Value::Float(123.456));
 
-    let (_rest, f) = parse_float("-1.234").unwrap();
+    let (_rest, f) = parse_int_or_float("-1.234").unwrap();
     assert_eq!(f, Value::Float(-1.234));
 }
 
@@ -138,4 +141,24 @@ fn test_big_value() {
             ])
         ]))
     ]));
+}
+
+#[test]
+fn test_float_vs_int_precedence() -> ParseResult<()> {
+    let value = Value::try_from("123.456")?;
+    assert_eq!(value, Value::Float(123.456));
+
+    let value = Value::try_from("-123.456")?;
+    assert_eq!(value, Value::Float(-123.456));
+
+    let value = Value::try_from("123")?;
+    assert_eq!(value, Value::Int(123));
+
+    let value = Value::try_from("-123")?;
+    assert_eq!(value, Value::Int(-123));
+
+    let value = Value::try_from("123.")?;
+    assert_eq!(value, Value::Float(123.0));
+
+    Ok(())
 }
