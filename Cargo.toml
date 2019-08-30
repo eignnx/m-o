@@ -1,6 +1,6 @@
 [package]
 name = "m-o"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["eignnx <eignnx@gmail.com>"]
 edition = "2018"
 
