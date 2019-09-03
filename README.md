@@ -43,3 +43,7 @@ Rather than implementing `pprint.pprint` for your dataclasses (who even knows ho
 ```shell
 $ cargo install m-o
 ```
+
+## (Planned/Current) Features
+[x] Parse string escape characters (0.1.5)
+[ ] Use "Wadler-style" pretty-printing algorithm

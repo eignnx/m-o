@@ -19,7 +19,7 @@ dependencies = [
 
 [[package]]
 name = "m-o"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "nom 5.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
