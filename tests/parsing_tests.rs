@@ -52,11 +52,59 @@ fn test_symbol() -> ParseResult<()> {
 
 #[test]
 fn test_str() -> ParseResult<()> {
-    let (_rest, s) = parse_str("\"double quoted\"")?;
-    assert_eq!(s, Value::Str("double quoted"));
+    let txt = r#""double quoted""#;
+    let (_rest, s) = parse_str(txt)?;
+    assert_eq!(s, Value::Str(txt));
 
-    let (_rest, s) = parse_str("'single quoted'")?;
-    assert_eq!(s, Value::Str("single quoted"));
+    let txt = r#"'single quoted'"#;
+    let (_rest, s) = parse_str(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    Ok(())
+}
+
+#[test]
+fn test_str_escaping() -> ParseResult<()> {
+    let txt = r#""escaped quote character (\") in a sentence.""#;
+    let s = Value::try_from(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    let txt = r#"'escaped quote character (\') in a sentence.'"#;
+    let s = Value::try_from(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    let txt = r#""what's up?""#;
+    let s = Value::try_from(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    let txt = r#"'they told me "keep it down"'"#;
+    let s = Value::try_from(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    let txt = r#"'I hadn\'t seen it coming.\n"who are you?" they said.'"#;
+    let s = Value::try_from(txt)?;
+    assert_eq!(s, Value::Str(txt));
+
+    let single_quote = r#"'\\ \' \a \b \f \n \N{name} \r \t \u1234 \U12341234 \v \012 \123 \234 \345 \456 \567 \670 \701 \x12'"#;
+    let s = Value::try_from(single_quote)?;
+    assert_eq!(s, Value::Str(single_quote));
+
+    let double_quote = r#""\\ \" \a \b \f \n \N{name} \r \t \u1234 \U12341234 \v \012 \123 \234 \345 \456 \567 \670 \701 \x12""#;
+    let s = Value::try_from(double_quote)?;
+    assert_eq!(s, Value::Str(double_quote));
+
+    Ok(())
+}
+
+#[test]
+fn test_quotes_inside_quotes() -> ParseResult<()> {
+    let quote = r#"'"'"#;
+    let s = Value::try_from(quote)?;
+    assert_eq!(s, Value::Str(quote));
+
+    let quote = r#""'""#;
+    let s = Value::try_from(quote)?;
+    assert_eq!(s, Value::Str(quote));
 
     Ok(())
 }
@@ -120,7 +168,7 @@ fn test_dict() -> ParseResult<()> {
         dict,
         Value::Dict(vec![
             (Value::Int(1), Value::Int(2)),
-            (Value::Str("a"), Value::Int(3)),
+            (Value::Str("'a'"), Value::Int(3)),
         ])
     );
 
@@ -161,7 +209,7 @@ fn test_big_value() -> ParseResult<()> {
                     Value::Int(2),
                     Value::List(vec![
                         Value::Bool(true),
-                        Value::List(vec![Value::Bool(false), Value::Str("abc")])
+                        Value::List(vec![Value::Bool(false), Value::Str("'abc'")])
                     ])
                 ])
             )]

@@ -92,7 +92,7 @@ fn indent(f: &mut fmt::Formatter, level: usize) -> Result<(), fmt::Error> {
 fn display_value(f: &mut fmt::Formatter, value: &Value, level: usize) -> Result<(), fmt::Error> {
     match value {
         Value::Bool(b) => f.write_str(if *b { "True" } else { "False" }),
-        Value::Str(s) => write!(f, "\"{}\"", *s),
+        Value::Str(s) => f.write_str(s),
         Value::Int(i) => write!(f, "{}", *i),
         Value::Float(float) => write!(f, "{}", *float),
         Value::Tuple(xs) => write_comma_seq(f, &xs, '(', ')', level),

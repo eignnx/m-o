@@ -2,9 +2,9 @@ use std::convert::TryFrom;
 
 use nom::{
     branch::alt,
-    bytes::complete::{is_not, tag},
+    bytes::complete::{escaped, is_not, one_of, tag},
     character::complete::{char, digit1, multispace0},
-    combinator::{map, not, opt},
+    combinator::{map, not, opt, recognize},
     multi::separated_list,
     number::complete::double,
     sequence::{delimited, preceded, terminated, tuple},
@@ -21,8 +21,33 @@ pub fn parse_bool(input: &str) -> IResult<&str, Value> {
 }
 
 pub fn parse_str(input: &str) -> IResult<&str, Value> {
-    let single_quoted = delimited(char('\''), is_not("'"), char('\''));
-    let double_quoted = delimited(char('"'), is_not("\""), char('"'));
+    // See: https://python-reference.readthedocs.io/en/latest/docs/str/escapes.html
+    //
+    // \a           ASCII bell
+    // \b           ASCII backspace
+    // \f           ASCII formfeed
+    // \n           ASCII linefeed
+    // \N{name}     character named NAME in the Unicode database
+    // \r           ASCII carriage return
+    // \t           ASCII horizontal tab
+    // \uxxxx       character with 16-bit hex value XXXX
+    // \Uxxxxxxxx   character with 32-bit hex value XXXXXXXX
+    // \v           ASCII vertical tab
+    // \ooo         character with octal value OOO
+    // \hxx         Character with hex value XX
+    let single_quoted_str_escape = r#"\'abfnNrtuUvx01234567"#;
+    let double_quoted_str_escape = r#"\"abfnNrtuUvx01234567"#;
+
+    let single_quoted = recognize(delimited(
+        char('\''),
+        escaped(is_not(r#"'\"#), '\\', one_of(single_quoted_str_escape)),
+        char('\''),
+    ));
+    let double_quoted = recognize(delimited(
+        char('"'),
+        escaped(is_not(r#""\"#), '\\', one_of(double_quoted_str_escape)),
+        char('"'),
+    ));
     map(alt((single_quoted, double_quoted)), Value::Str)(input)
 }
 
