@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 
 use nom::{
     branch::alt,
-    bytes::complete::{escaped, is_not, one_of, tag},
-    character::complete::{char, digit1, multispace0},
+    bytes::complete::{escaped, is_not, tag},
+    character::complete::{char, digit1, multispace0, one_of},
     combinator::{map, not, opt, recognize},
     multi::separated_list,
     number::complete::double,
