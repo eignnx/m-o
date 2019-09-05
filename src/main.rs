@@ -1,8 +1,9 @@
 use std::convert::TryFrom;
-use std::io::{self, Read};
+use std::io::{self, Read, Write};
 use std::process;
 
 use m_o::value::Value;
+use sparkly::Sparkly;
 
 fn main() {
     let mut stdin = io::stdin();
@@ -15,5 +16,13 @@ fn main() {
         eprintln!("\t{:?}", e);
         process::exit(1);
     });
-    println!("{}", value);
+
+    // Get terminal width (if it's available), use 80 as default.
+    let (width, _height) = termion::terminal_size().unwrap_or_else(|_| {
+        (80, 0)
+    });
+
+    let doc = value.to_doc();
+    let fmt = doc.display_opts(width as usize, true);
+    writeln!(io::stdout(), "{}", fmt).expect("stdout can be written to");
 }
