@@ -18,4 +18,4 @@ keywords = ["python", "dataclasses", "pretty-print"]
 [dependencies]
 nom = "5.0.1"
 termion = "1.5.3"
-pretty = { path = "deps/pretty.rs" }
+pretty = { git = "https://github.com/Marwes/pretty.rs", version = "0.5.3-alpha.0" }

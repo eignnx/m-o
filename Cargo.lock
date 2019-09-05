@@ -27,7 +27,7 @@ name = "m-o"
 version = "0.1.6"
 dependencies = [
  "nom 5.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "pretty 0.5.3-alpha.0",
+ "pretty 0.5.3-alpha.0 (git+https://github.com/Marwes/pretty.rs)",
  "termion 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -54,6 +54,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "pretty"
 version = "0.5.3-alpha.0"
+source = "git+https://github.com/Marwes/pretty.rs#7fb895eff160b8bfd6d28efb19bf24f0b9326109"
 dependencies = [
  "typed-arena 1.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -152,6 +153,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum memchr 2.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "88579771288728879b57485cc7d6b07d648c9f0141eb955f8ab7f9d45394468e"
 "checksum nom 5.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "c618b63422da4401283884e6668d39f819a106ef51f5f59b81add00075da35ca"
 "checksum numtoa 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b8f8bdf33df195859076e54ab11ee78a1b208382d3a26ec40d142ffc1ecc49ef"
+"checksum pretty 0.5.3-alpha.0 (git+https://github.com/Marwes/pretty.rs)" = "<none>"
 "checksum redox_syscall 0.1.56 (registry+https://github.com/rust-lang/crates.io-index)" = "2439c63f3f6139d1b57529d16bc3b8bb855230c8efcc5d3a896c8bea7c3b1e84"
 "checksum redox_termios 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7e891cfe48e9100a70a3b6eb652fef28920c117d366339687bd5576160db0f76"
 "checksum rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "138e3e0acb6c9fb258b19b67cb8abd63c00679d2851805ea151465464fe9030a"
