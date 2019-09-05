@@ -3,7 +3,6 @@ use std::io::{self, Read, Write};
 use std::process;
 
 use m_o::value::Value;
-use sparkly::Sparkly;
 
 fn main() {
     let mut stdin = io::stdin();
@@ -21,6 +20,6 @@ fn main() {
     let (width, _height) = termion::terminal_size().unwrap_or_else(|_| (80, 0));
 
     let doc = value.to_doc();
-    let fmt = doc.display_opts(width as usize, true);
+    let fmt = doc.pretty(width as usize);
     writeln!(io::stdout(), "{}", fmt).expect("stdout can be written to");
 }

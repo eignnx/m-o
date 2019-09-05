@@ -1,32 +1,29 @@
 use std::fmt;
 
 use super::Value;
-use sparkly::{Colour, Doc, Sparkly, Style};
+use pretty::{BoxDoc, Doc};
 
 static INDENT: usize = 4;
 
 impl<'value> Value<'value> {
-    fn seq_to_doc<'iter, I, S>(open: &'static str, xs: I, close: &'static str) -> Doc
+    fn seq_to_doc<'iter, I>(open: &'static str, xs: I, close: &'static str) -> Doc<'value, BoxDoc<'value, ()>>
     where
-        I: Iterator<Item = S>,
-        S: Sparkly,
+        I: Iterator<Item = Doc<'value, BoxDoc<'value, ()>>>,
         'value: 'iter,
     {
-        Doc::text(open, Style::default())
-            .append(Doc::split_point())
+        Doc::text(open)
+            .append(Doc::newline().flat_alt(Doc::nil()))
             .nest(INDENT)
             .append(
-                Doc::text(",", Style::default())
-                    .append(Doc::space())
-                    .join(xs)
-                    .nest(INDENT),
+                Doc::intersperse(xs, Doc::text(",").append(Doc::space()))
+                    .nest(INDENT)
             )
-            .append(Doc::split_point())
-            .append(Doc::text(close, Style::default()))
+            .append(Doc::newline().flat_alt(Doc::nil()))
+            .append(Doc::text(close))
             .group()
     }
 
-    fn dictionary_to_doc<'tmp>(pairs: &'tmp Vec<(Value<'value>, Value<'value>)>) -> Doc
+    fn dictionary_to_doc<'tmp>(pairs: &'tmp Vec<(Value<'value>, Value<'value>)>) -> Doc<'value, BoxDoc<'value, ()>>
     where
         'value: 'tmp,
     {
@@ -34,7 +31,7 @@ impl<'value> Value<'value> {
             "{",
             pairs.iter().map(|(key, value)| {
                 key.to_doc()
-                    .append(Doc::text(": ", Style::default()))
+                    .append(Doc::text(": "))
                     .append(value.to_doc())
             }),
             "}",
@@ -45,16 +42,16 @@ impl<'value> Value<'value> {
     fn constructor_to_doc<'tmp>(
         name: &'value str,
         kwargs: &'tmp Vec<(&'value str, Value<'value>)>,
-    ) -> Doc
+    ) -> Doc<'value, BoxDoc<'value, ()>>
     where
         'value: 'tmp,
     {
-        Doc::text(name, Style::from(Colour::Blue))
+        Doc::text(name)
             .append(Self::seq_to_doc(
                 "(",
                 kwargs.iter().map(|(key, value)| {
-                    Doc::text(*key, Style::from(Colour::Blue))
-                        .append(Doc::text("=", Style::default()))
+                    Doc::text(*key)
+                        .append(Doc::text("="))
                         .append(value.to_doc())
                 }),
                 ")",
@@ -63,16 +60,14 @@ impl<'value> Value<'value> {
     }
 }
 
-impl<'value> Sparkly for Value<'value> {
-    fn to_doc(&self) -> Doc {
+impl<'value> Value<'value> {
+    pub fn to_doc(&self) -> Doc<'value, BoxDoc<'value, ()>> {
         match *self {
-            Value::Int(x) => Doc::text(x, Style::from(Colour::Purple)),
-            Value::Float(x) => Doc::text(x, Style::from(Colour::Purple)),
-            Value::Bool(x) => {
-                Doc::text(if x { "True" } else { "False" }, Style::from(Colour::Green))
-            }
-            Value::Symbol(x) => Doc::text(x, Style::from(Colour::Blue)),
-            Value::Str(x) => Doc::text(x, Style::from(Colour::Cyan)),
+            Value::Int(x) => Doc::text(x.to_string()),
+            Value::Float(x) => Doc::text(x.to_string()),
+            Value::Bool(x) => Doc::text(if x { "True" } else { "False" }),
+            Value::Symbol(x) => Doc::text(x),
+            Value::Str(x) => Doc::text(x),
             Value::List(ref xs) => Self::seq_to_doc("[", xs.iter().map(Self::to_doc), "]"),
             Value::Tuple(ref xs) => Self::seq_to_doc("(", xs.iter().map(Self::to_doc), ")"),
             Value::Set(ref xs) => Self::seq_to_doc("{", xs.iter().map(Self::to_doc), "}"),
@@ -84,6 +79,6 @@ impl<'value> Sparkly for Value<'value> {
 
 impl<'a> fmt::Display for Value<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        self.to_doc().display().fmt(f)
+        self.to_doc().render_fmt(80, f)
     }
 }

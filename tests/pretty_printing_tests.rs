@@ -1,8 +1,7 @@
 use m_o::value::Value;
-use sparkly::Sparkly;
 
 fn value_to_string(value: &Value, width: usize) -> String {
-    value.to_doc().display_opts(width, false).to_string()
+    value.to_doc().pretty(width).to_string()
 }
 
 #[test]
