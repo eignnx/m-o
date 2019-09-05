@@ -46,5 +46,9 @@ $ cargo install m-o
 
 ## (Planned/Current) Features
 - [x] Parse string escape characters (0.1.5)
-- [ ] Use "Wadler-style" pretty-printing algorithm
+- [x] Use "Wadler-style" pretty-printing algorithm
+- [ ] Investigate speed of pretty-printing algorithm
+- [ ] Add command-line options for:
+  - [ ] Indentation level (currently 4 spaces)
+  - [ ] Target width (number of columns)
 - [ ] Better error messages when parsing fails
