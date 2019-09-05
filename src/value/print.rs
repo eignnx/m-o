@@ -6,7 +6,11 @@ use pretty::{BoxDoc, Doc};
 static INDENT: usize = 4;
 
 impl<'value> Value<'value> {
-    fn seq_to_doc<'iter, I>(open: &'static str, xs: I, close: &'static str) -> Doc<'value, BoxDoc<'value, ()>>
+    fn seq_to_doc<'iter, I>(
+        open: &'static str,
+        xs: I,
+        close: &'static str,
+    ) -> Doc<'value, BoxDoc<'value, ()>>
     where
         I: Iterator<Item = Doc<'value, BoxDoc<'value, ()>>>,
         'value: 'iter,
@@ -14,26 +18,23 @@ impl<'value> Value<'value> {
         Doc::text(open)
             .append(Doc::newline().flat_alt(Doc::nil()))
             .nest(INDENT)
-            .append(
-                Doc::intersperse(xs, Doc::text(",").append(Doc::space()))
-                    .nest(INDENT)
-            )
+            .append(Doc::intersperse(xs, Doc::text(",").append(Doc::space())).nest(INDENT))
             .append(Doc::newline().flat_alt(Doc::nil()))
             .append(Doc::text(close))
             .group()
     }
 
-    fn dictionary_to_doc<'tmp>(pairs: &'tmp Vec<(Value<'value>, Value<'value>)>) -> Doc<'value, BoxDoc<'value, ()>>
+    fn dictionary_to_doc<'tmp>(
+        pairs: &'tmp Vec<(Value<'value>, Value<'value>)>,
+    ) -> Doc<'value, BoxDoc<'value, ()>>
     where
         'value: 'tmp,
     {
         Self::seq_to_doc(
             "{",
-            pairs.iter().map(|(key, value)| {
-                key.to_doc()
-                    .append(Doc::text(": "))
-                    .append(value.to_doc())
-            }),
+            pairs
+                .iter()
+                .map(|(key, value)| key.to_doc().append(Doc::text(": ")).append(value.to_doc())),
             "}",
         )
         .group()

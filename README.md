@@ -46,8 +46,8 @@ $ cargo install m-o
 
 ## (Planned/Current) Features
 - [x] Parse string escape characters (0.1.5)
-- [x] Use "Wadler-style" pretty-printing algorithm
-- [ ] Investigate speed of pretty-printing algorithm
+- [x] Use "Wadler-style" pretty-printing algorithm (0.1.6)
+- [ ] Use stable version of [`pretty.rs`](https://github.com/Marwes/pretty.rs)
 - [ ] Add command-line options for:
   - [ ] Indentation level (currently 4 spaces)
   - [ ] Target width (number of columns)
