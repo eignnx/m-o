@@ -18,9 +18,7 @@ fn main() {
     });
 
     // Get terminal width (if it's available), use 80 as default.
-    let (width, _height) = termion::terminal_size().unwrap_or_else(|_| {
-        (80, 0)
-    });
+    let (width, _height) = termion::terminal_size().unwrap_or_else(|_| (80, 0));
 
     let doc = value.to_doc();
     let fmt = doc.display_opts(width as usize, true);
