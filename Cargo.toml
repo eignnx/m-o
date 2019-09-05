@@ -17,3 +17,7 @@ keywords = ["python", "dataclasses", "pretty-print"]
 
 [dependencies]
 nom = "5.0.1"
+sparkly = "0.1.5"
+
+[features]
+termion = ["sparkly/termion"]
