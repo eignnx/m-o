@@ -40,9 +40,16 @@ Python's `pprint.pprint` function allows common values (tuples, lists, dicts, et
 Rather than implementing `pprint.pprint` for your dataclasses (who even knows how to do this anyway?), just print out the value and pipe it into this tool. The data structure will be pretty-printed to your terminal.
 
 ## Installation
+Currently, `m-o` depends on an unreleased alpha version of `pretty.rs`. This means `cargo install m-o` doesn't work because the crate cannot be published on `crates.io`. Until the next version of `pretty.rs` is released, install the latest version (currently 0.1.6) directly from github with this command:
+```shell
+$ cargo install --git https://github.com/eignnx/m-o
+```
+
+If you don't mind using an older version of the crate, you can install version 0.1.5 (which has a less sophisticated layout algorithm) from `crates.io` with this command:
 ```shell
 $ cargo install m-o
 ```
+
 
 ## (Planned/Current) Features
 - [x] Parse string escape characters (0.1.5)
