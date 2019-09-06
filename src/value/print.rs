@@ -38,7 +38,7 @@ impl<'value> Value<'value> {
     }
 
     fn dictionary_to_doc<'tmp>(
-        pairs: &'tmp Vec<(Value<'value>, Value<'value>)>,
+        pairs: &'tmp [(Value<'value>, Value<'value>)],
         options: &PrintOptions,
     ) -> Doc<'value, BoxDoc<'value, ()>>
     where
@@ -59,7 +59,7 @@ impl<'value> Value<'value> {
 
     fn constructor_to_doc<'tmp>(
         name: &'value str,
-        kwargs: &'tmp Vec<(&'value str, Value<'value>)>,
+        kwargs: &'tmp [(&'value str, Value<'value>)],
         options: &PrintOptions,
     ) -> Doc<'value, BoxDoc<'value, ()>>
     where
