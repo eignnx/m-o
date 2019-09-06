@@ -1,6 +1,6 @@
 [package]
 name = "m-o"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["eignnx <eignnx@gmail.com>"]
 edition = "2018"
 
@@ -19,3 +19,4 @@ keywords = ["python", "dataclasses", "pretty-print"]
 nom = "5.0.1"
 termion = "1.5.3"
 pretty = { git = "https://github.com/Marwes/pretty.rs", version = "0.5.3-alpha.0" }
+structopt = "0.3.1"

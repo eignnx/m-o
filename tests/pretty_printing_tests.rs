@@ -1,7 +1,12 @@
+use m_o::value::print::PrintOptions;
 use m_o::value::Value;
 
-fn value_to_string(value: &Value, width: usize) -> String {
-    value.to_doc().pretty(width).to_string()
+fn value_to_string(value: &Value, columns: usize) -> String {
+    let options = PrintOptions {
+        columns,
+        ..Default::default()
+    };
+    value.to_doc(&options).pretty(options.columns).to_string()
 }
 
 #[test]

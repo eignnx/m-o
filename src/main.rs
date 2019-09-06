@@ -2,7 +2,11 @@ use std::convert::TryFrom;
 use std::io::{self, Read};
 use std::process;
 
+use structopt::StructOpt;
+
 use m_o::value::Value;
+
+mod opt;
 
 fn read_stdin() -> String {
     let mut buf = String::new();
@@ -20,20 +24,14 @@ fn parse_input(input: &str) -> Value {
     })
 }
 
-fn terminal_width() -> usize {
-    termion::terminal_size()
-        .map(|(w, _h)| w as usize)
-        .unwrap_or(80)
-}
-
-fn pretty_print(value: Value) {
-    let width = terminal_width();
-    let doc = value.to_doc();
-    println!("{}", doc.pretty(width));
+fn pretty_print(value: Value, options: &opt::Opt) {
+    let doc = value.to_doc(&options.into());
+    println!("{}", doc.pretty(options.columns));
 }
 
 fn main() {
+    let options = opt::Opt::from_args();
     let input = read_stdin();
     let value = parse_input(&input);
-    pretty_print(value);
+    pretty_print(value, &options);
 }
