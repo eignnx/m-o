@@ -2,8 +2,6 @@ use std::convert::TryFrom;
 use std::io::{self, Read};
 use std::process;
 
-use structopt::StructOpt;
-
 use m_o::value::Value;
 
 mod opt;
