@@ -51,6 +51,18 @@ fn test_symbol() -> ParseResult<()> {
 }
 
 #[test]
+fn test_symbol_with_dot() -> ParseResult<()> {
+    let (_rest, sym) = parse_symbol("datetime.datetime")?;
+    assert_eq!(sym, Value::Symbol("datetime.datetime"));
+
+    let path = "foo_123.bar.baz._.qux";
+    let (_rest, sym) = parse_symbol(path)?;
+    assert_eq!(sym, Value::Symbol(path));
+
+    Ok(())
+}
+
+#[test]
 fn test_str() -> ParseResult<()> {
     let txt = r#""double quoted""#;
     let (_rest, s) = parse_str(txt)?;
@@ -192,6 +204,7 @@ fn test_constructor() -> ParseResult<()> {
             vec![("arg1", Value::Int(12)), ("arg2", Value::Int(34)),]
         )
     );
+
     Ok(())
 }
 

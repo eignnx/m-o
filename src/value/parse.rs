@@ -7,8 +7,9 @@ use nom::{
     combinator::{map, not, opt, recognize},
     multi::separated_list,
     number::complete::double,
+    re_find,
     sequence::{delimited, preceded, terminated, tuple},
-    AsChar, IResult,
+    IResult,
 };
 
 use super::Value;
@@ -121,19 +122,10 @@ pub fn parse_dict(input: &str) -> IResult<&str, Value> {
 }
 
 fn identifier(input: &str) -> IResult<&str, &str> {
-    let mut chars = input.chars().enumerate();
-    let first_char = chars.next();
-    first_char
-        .filter(|(_, ch)| (*ch == '_' || ch.is_alpha()))
-        .and_then(|_| {
-            chars
-                .take_while(|(_i, ch)| (*ch == '_' || ch.is_alphanumeric()))
-                .map(|(i, _ch)| i)
-                .last()
-                .map(|idx| (&input[idx + 1..], &input[0..=idx]))
-                .or_else(|| Some((&input[1..], &input[..1])))
-        })
-        .ok_or_else(|| nom::Err::Error((input, nom::error::ErrorKind::Char)))
+    re_find!(
+        input,
+        r"^([a-zA-Z_][a-zA-Z0-9_]*)(\.[a-zA-Z_][a-zA-Z0-9_]*)*"
+    )
 }
 
 pub fn parse_symbol(input: &str) -> IResult<&str, Value> {
