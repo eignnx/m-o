@@ -1,5 +1,5 @@
 use m_o::value::print::PrintOptions;
-use m_o::value::Value;
+use m_o::value::{Arg, Value};
 
 fn value_to_string(value: &Value, columns: usize) -> String {
     let options = PrintOptions {
@@ -17,7 +17,10 @@ fn test_simple_value_to_string() {
         Value::Bool(true),
         Value::Constructor(
             "Dog",
-            vec![("name", Value::Str("'Pip'")), ("age", Value::Int(7))],
+            vec![
+                Arg::Kwarg("name", Value::Str("'Pip'")),
+                Arg::Kwarg("age", Value::Int(7)),
+            ],
         ),
     ]);
 
@@ -54,7 +57,10 @@ fn test_deep_nesting_to_string() {
             Value::Int(678),
             Value::Constructor(
                 "Dog",
-                vec![("name", Value::Str("\"Pip\"")), ("age", Value::Int(7))],
+                vec![
+                    Arg::Kwarg("name", Value::Str("\"Pip\"")),
+                    Arg::Kwarg("age", Value::Int(7)),
+                ],
             ),
         ]),
     ])]);

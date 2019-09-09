@@ -1,6 +1,7 @@
 use std::fmt;
 
 use super::Value;
+use crate::value::Arg;
 use pretty::{BoxDoc, Doc};
 
 pub struct PrintOptions {
@@ -59,7 +60,7 @@ impl<'value> Value<'value> {
 
     fn constructor_to_doc<'tmp>(
         name: &'value str,
-        kwargs: &'tmp [(&'value str, Value<'value>)],
+        args: &'tmp [Arg<'value>],
         options: &PrintOptions,
     ) -> Doc<'value, BoxDoc<'value, ()>>
     where
@@ -68,10 +69,11 @@ impl<'value> Value<'value> {
         Doc::text(name)
             .append(Self::seq_to_doc(
                 "(",
-                kwargs.iter().map(|(key, value)| {
-                    Doc::text(*key)
+                args.iter().map(|arg| match arg {
+                    Arg::Arg(value) => value.to_doc(options),
+                    Arg::Kwarg(key, value) => Doc::text(*key)
                         .append(Doc::text("="))
-                        .append(value.to_doc(options))
+                        .append(value.to_doc(options)),
                 }),
                 ")",
                 options,
@@ -98,7 +100,7 @@ impl<'value> Value<'value> {
                 Self::seq_to_doc("{", xs.iter().map(|x| x.to_doc(options)), "}", options)
             }
             Value::Dict(ref pairs) => Self::dictionary_to_doc(pairs, options),
-            Value::Constructor(name, ref kwargs) => Self::constructor_to_doc(name, kwargs, options),
+            Value::Constructor(name, ref args) => Self::constructor_to_doc(name, args, options),
         }
     }
 }

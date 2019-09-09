@@ -13,6 +13,8 @@ use nom::{
 };
 
 use super::Value;
+use crate::value::Arg;
+use crate::value::Arg::Kwarg;
 
 pub fn parse_bool(input: &str) -> IResult<&str, Value> {
     alt((
@@ -132,19 +134,21 @@ pub fn parse_symbol(input: &str) -> IResult<&str, Value> {
     map(identifier, Value::Symbol)(input)
 }
 
-fn parse_kwarg(input: &str) -> IResult<&str, (&str, Value)> {
-    tuple((identifier, preceded(char('='), parse_value)))(input)
+fn parse_arg(input: &str) -> IResult<&str, Arg> {
+    alt((
+        map(
+            tuple((identifier, preceded(char('='), parse_value))),
+            |(ident, value)| Kwarg(ident, value),
+        ),
+        map(parse_value, Arg::Arg),
+    ))(input)
 }
 
 pub fn parse_constructor(input: &str) -> IResult<&str, Value> {
     map(
         tuple((
             identifier,
-            delimited(
-                char('('),
-                separated_list(comma_space, parse_kwarg),
-                char(')'),
-            ),
+            delimited(char('('), separated_list(comma_space, parse_arg), char(')')),
         )),
         |(name, kwargs)| Value::Constructor(name, kwargs),
     )(input)

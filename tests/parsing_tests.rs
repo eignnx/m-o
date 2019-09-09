@@ -7,7 +7,7 @@ use m_o::value::{
         parse_bool, parse_constructor, parse_dict, parse_list, parse_set, parse_str, parse_symbol,
         parse_tuple,
     },
-    Value,
+    Arg, Value,
 };
 
 type ParseResult<T> = Result<T, nom::Err<(&'static str, ErrorKind)>>;
@@ -201,7 +201,49 @@ fn test_constructor() -> ParseResult<()> {
         cons,
         Value::Constructor(
             "MyType",
-            vec![("arg1", Value::Int(12)), ("arg2", Value::Int(34)),]
+            vec![
+                Arg::Kwarg("arg1", Value::Int(12)),
+                Arg::Kwarg("arg2", Value::Int(34)),
+            ]
+        )
+    );
+
+    Ok(())
+}
+
+#[test]
+fn test_datetime_constructor() -> ParseResult<()> {
+    let (_rest, cons) = parse_constructor("datetime.datetime(2019, 9, 9, 15, 9, 4, 463369)")?;
+    assert_eq!(
+        cons,
+        Value::Constructor(
+            "datetime.datetime",
+            vec![
+                Arg::Arg(Value::Int(2019)),
+                Arg::Arg(Value::Int(9)),
+                Arg::Arg(Value::Int(9)),
+                Arg::Arg(Value::Int(15)),
+                Arg::Arg(Value::Int(9)),
+                Arg::Arg(Value::Int(4)),
+                Arg::Arg(Value::Int(463369)),
+            ]
+        )
+    );
+
+    Ok(())
+}
+
+#[test]
+fn test_mixed_args_and_kwargs_constructor() -> ParseResult<()> {
+    let (_rest, cons) = parse_constructor("Dog('Pip', age=7)")?;
+    assert_eq!(
+        cons,
+        Value::Constructor(
+            "Dog",
+            vec![
+                Arg::Arg(Value::Str("'Pip'")),
+                Arg::Kwarg("age", Value::Int(7)),
+            ]
         )
     );
 
@@ -215,7 +257,7 @@ fn test_big_value() -> ParseResult<()> {
         value,
         Value::Constructor(
             "A",
-            vec![(
+            vec![Arg::Kwarg(
                 "qwerty",
                 Value::Set(vec![
                     Value::Int(1),

@@ -60,3 +60,5 @@ $ cargo install m-o
   - [x] Indentation level (currently 4 spaces) (0.1.7)
   - [x] Target width (number of columns) (0.1.7)
 - [ ] Better error messages when parsing fails
+- [x] Allow non-keyword arguments in constructors (ex: `Dog('Pip', age=7)`) (0.1.7)
+- [x] Support multi-identifier paths in symbols (ex: `datetime.datetime`) (0.1.7)
