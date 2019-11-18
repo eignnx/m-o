@@ -81,7 +81,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "m-o"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "nom 5.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pretty 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
