@@ -34,6 +34,25 @@ Dog(
 
 ```
 
+### CLI Options
+
+```
+USAGE:
+    m-o [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --columns <columns>    Specifies the width of the terminal or file that
+                               the results will be printed to. If unspecified,
+                               `m-o` will try to use the width of the current
+                               terminal window. Defaults to 80 columns.
+    -i, --indent <indent>      The number of spaces used for a single
+                               indentation in the output. [default: 4]
+```
+
 ## why tho?
 Python's `pprint.pprint` function allows common values (tuples, lists, dicts, etc.) to be pretty-printed, but does not know how to format Python 3.7's [`dataclasses`](https://docs.python.org/3/library/dataclasses.html). I use dataclasses pretty frequently, and often need to debug deeply nested trees of dataclasses. The `__repr__` method on dataclasses displays everything on one line which is difficult to read.
 

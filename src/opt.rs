@@ -9,7 +9,8 @@ struct HiddenOpt {
     indent: usize,
 
     /// Specifies the width of the terminal or file that the results will be printed to. If
-    /// unspecified, `m-o` will try to use the width of the current terminal window.
+    /// unspecified, `m-o` will try to use the width of the current terminal window. Defaults
+    /// to 80 columns.
     #[structopt(short, long)]
     columns: Option<usize>,
 }
