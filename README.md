@@ -60,16 +60,8 @@ Rather than implementing `pprint.pprint` for your dataclasses (who even knows ho
 
 ## Installation
 ```shell
-$ cargo install --git https://github.com/eignnx/m-o
-```
-### Why not `cargo install m-o`?
-Currently, `m-o` depends on an unreleased alpha version of `pretty.rs`. This means `cargo install m-o` doesn't work because the crate cannot be published on `crates.io`.
-
-If you don't mind using an older version of the crate, you can install version 0.1.5 (which has a less sophisticated layout algorithm) from `crates.io` with this command:
-```shell
 $ cargo install m-o
 ```
-
 
 ## (Planned/Current) Features
 - [x] Parse string escape characters (0.1.5)
