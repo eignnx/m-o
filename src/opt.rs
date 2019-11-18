@@ -25,13 +25,18 @@ pub struct Opt {
     pub columns: usize,
 }
 
-impl Opt {
-    pub fn from_args() -> Self {
-        let hidden = HiddenOpt::from_args();
+impl From<HiddenOpt> for Opt {
+    fn from(hidden: HiddenOpt) -> Self {
         Opt {
             indent: hidden.indent,
             columns: hidden.columns.unwrap_or_else(terminal_width),
         }
+    }
+}
+
+impl Opt {
+    pub fn from_args() -> Self {
+        HiddenOpt::from_args().into()
     }
 }
 
