@@ -22,7 +22,7 @@ $ python my_data.py
 Dog(name="Pip", age=7, friends=["Quincy", "Digger"])
 
 $ # with m-o:
-$ python my_data.py | m-o
+$ python my_data.py | m-o --columns 20
 Dog(
     name="Pip",
     age=7,
